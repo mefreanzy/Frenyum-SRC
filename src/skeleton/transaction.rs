@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TransactionData
 {
-    pub sender: String,
-    pub recevier: String,
+    pub from: String,
+    pub to: String,
     pub amount: String,
     pub timestamp: i64,
 }
