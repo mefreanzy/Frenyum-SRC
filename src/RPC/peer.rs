@@ -3,18 +3,19 @@ extern crate serde_json;
 
 use serde::{Serialize, Deserialize};
 use std::io::{Read, Write, Error, ErrorKind};
-use std::net::TcpStream
-use std::sync::{Arc, Mutex};
+use std::net::TcpStream;
+use std::sync::Mutex;
 
 use crate::skeleton::block::Block;
 
-enum Message
+#[derive(Serialize, Deserialize, Debug)]
+pub enum Message
 {
     Block(Block),               // A block message is a message containing a `Block` object.
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct Node
+pub struct Node
 {
     adress: String,
     port: u16,
@@ -54,3 +55,4 @@ impl Node
         Ok(message)
     }
 }
+
