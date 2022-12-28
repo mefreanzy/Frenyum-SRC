@@ -1,39 +1,59 @@
-use std::sync::Mutex;
-use std::thread::spawn;
-use std::net::TcpListener;
+extern crate serde;
+extern crate serde_json;
+
+use serde::{Serialize, Deserialize};
 use std::io::{Read, Write, Error, ErrorKind};
+use std::net::TcpStream;
+use std::sync::Mutex;
 
-use Frenyum::skeleton::block::Block;
-use Frenyum::RPC::peer::{Node, Message};
+use crate::skeleton::block::Block;
 
-fn main() {
-    println!("Type 'help' to list command.");
+#[derive(Serialize, Deserialize, Debug)]
+pub enum Message
+{
+    Block(Block),               // A block message is a message containing a `Block` object.
+}
 
-    let memory: Vec<Block> = Vec::new();
-    let memory_lock: Mutex<Vec<Block>>  = Mutex::new(Vec::new());
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Node
+{
+    pub adress: String,
+    pub port: u16,
+    pub memory: Vec<Block>,
+    pub memory_lock: Mutex<Vec<Block>>,
+    pub peers: Vec<String>,
+}
 
-    let mut peers: Vec<String> = Vec::new();
+impl Node
+{
+    pub fn new(adress: String, port: u16) -> Node
+    {
+        // Create new node
+        let node = Node {
+            adress,
+            port,
+            memory: Vec::new(),
+            memory_lock: Mutex::new(Vec::new()),
+            peers: Vec::new(),
+        };
 
-    spawn(|| {
-        let listener = TcpListener::bind("0.0.0.0:1000");
+        node
+    }
 
-        for income in listener.expect("Adress is wrong.").incoming()
-        {
-            let mut stream = income.unwrap();
-            println!("New connection accepted: {}", stream.peer_addr().unwrap());
+    pub fn send_message(stream: &mut TcpStream, message: Message) -> Result<(), Error>
+    {
+        let serialized = serde_json::to_string(&message)?;
 
-            let message = receive_message(&mut stream).unwrap();
-            println!("Message received: {}", message);
+        stream.write_all(serialized.as_bytes())?;
+        Ok(())
+    }
 
-            match message
-            {
-                Message::Block(block) => {
-                    let lock = memory_lock.lock().unwrap();
+    pub fn receive_message(stream: &mut TcpStream) -> Result<Message, Error>
+    {
+        let mut buffer = String::new();
+        stream.read_to_string(&mut buffer);
 
-                    memory.push(block);
-                }
-            }
-        }
-
-    });
+        let message: Message = serde_json::from_str(&buffer)?;
+        Ok(message)
+    }
 }
