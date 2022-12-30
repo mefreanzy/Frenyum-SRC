@@ -11,7 +11,8 @@ use crate::skeleton::block::Block;
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Message
 {
-    Block(Block),               // A block message is a message containing a `Block` object.
+    TXData(TransactionData),    // A TXData message is a message containing a `TransactionData` object.
+    Block(Block),               // A Block message is a message containing a `Block` object.
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -19,8 +20,8 @@ pub struct Node
 {
     pub adress: String,
     pub port: u16,
-    pub memory: Vec<Block>,
-    pub memory_lock: Mutex<Vec<Block>>,
+    pub memory: Vec<TransactionData>,
+    pub memory_lock: Mutex<Vec<TransactionData>>,
     pub peers: Vec<String>,
 }
 
