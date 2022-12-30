@@ -30,6 +30,12 @@ impl Block
         hash
     }
 
+    pub fn serialize(&self) -> Vec<u8>
+    {
+        let serialized = serde_json::to_string(self).unwrap();
+        serialized.into_bytes()
+    }
+
     pub fn new(index: i32, previous_hash: String, vtx: Vec<TransactionData>, nonce: u32) -> Block
     {
         let block = Block {
