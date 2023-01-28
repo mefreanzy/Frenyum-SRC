@@ -12,3 +12,5 @@ tokio = "1"
 chrono = "0.4.19"
 serde = { version = "1.0.137", features = ["derive"] }
 serde_json = "1.0.81"
+mongodb = "1.0.0"
+bson = "0.13.0"
