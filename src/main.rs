@@ -15,8 +15,15 @@ fn main() {
     println!("----------------------------");
     println!("Type 'help' to list command.");
 
+    // Database setting
+    
+    let uri = "mongodb://localhost:27017";
+    let db_name = "blockchain";
+    let blockdb_name = "blocks_list";
+    let txdb_name = "transaction_list";
+
     // New blockchain
-    let blockchain = Blockchain::new("blocks_db")
+    let blockchain = Blockchain::new(uri, db_name, coll_name);
 
     // Create new node structure
     let adrr: String = "0.0.0.0".to_string();
@@ -37,17 +44,10 @@ fn main() {
             match message
             {
                 Message::TXData(TransactionData) => {
-                    let lock = node.memory_lock.lock().unwrap();
 
-                    node.memory.push(TransactionData);
                 }
                 Message::Block(Block) => {
-                    Blockchain.db
-                    .put(Block.index.to_string().as_bytes(),
-                    Block.time.to_string().as_bytes(),
-                    Block.nonce.to_string().as_bytes(),
-                    serde_json::to_vec(&Block).unwrap()),
-                    .unwrap();
+                    blockchain.add_db_block();
                 }
             }
         }
