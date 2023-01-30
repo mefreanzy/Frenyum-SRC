@@ -3,8 +3,6 @@ use std::thread::spawn;
 use std::net::TcpListener;
 use std::io::{Read, Write, Error};
 use std::io;
-use rocksdb::DB;
-
 
 use Frenyum::skeleton::block::Block;
 use Frenyum::skeleton::blockchain::Blockchain;
@@ -16,14 +14,14 @@ fn main() {
     println!("Type 'help' to list command.");
 
     // Database setting
-    
+
     let uri = "mongodb://localhost:27017";
     let db_name = "blockchain";
     let blockdb_name = "blocks_list";
     let txdb_name = "transaction_list";
 
     // New blockchain
-    let blockchain = Blockchain::new(uri, db_name, coll_name);
+    let blockchain = Blockchain::new(uri, db_name, blockdb_name, txdb_name);
 
     // Create new node structure
     let adrr: String = "0.0.0.0".to_string();
@@ -47,6 +45,10 @@ fn main() {
 
                 }
                 Message::Block(Block) => {
+                    let blockchain = match blockchain {
+                        Ok(blockchain) => blockchain,
+                        Err(err) => return Err(err),
+                    }
                     blockchain.add_db_block();
                 }
             }
