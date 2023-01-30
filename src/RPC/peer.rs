@@ -2,11 +2,12 @@ extern crate serde;
 extern crate serde_json;
 
 use serde::{Serialize, Deserialize};
-use std::io::{Read, Write, Error, ErrorKind};
+use std::io::{Read, Write, Error};
 use std::net::TcpStream;
 use std::sync::Mutex;
 
 use crate::skeleton::block::Block;
+use crate::skeleton::transaction::TransactionData;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Message
