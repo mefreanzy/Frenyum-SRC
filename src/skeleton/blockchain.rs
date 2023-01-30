@@ -5,7 +5,7 @@ use mongodb::{Client, Collection, Database};
 use mongodb::bson::doc;
 use mongodb::bson;
 
-struct Blockchain
+pub struct Blockchain
 {
     client: Client,
     db: Database,
@@ -15,7 +15,7 @@ struct Blockchain
 
 impl Blockchain
 {
-    async fn new(uri: &str, db_name: &str, blockdb_name: &str, txdb_name: &str) -> Result<Blockchain, mongodb::error::Error>
+    pub async fn new(uri: &str, db_name: &str, blockdb_name: &str, txdb_name: &str) -> Result<Blockchain, mongodb::error::Error>
     {
         let client = match Client::with_uri_str(uri).await {
             Ok(client) => client,
@@ -39,10 +39,10 @@ impl Blockchain
         let bson_transaction = bson::to_document(transaction);
 
         let bson_transaction = doc! {
-            "from": transaction.from,
-            "to": transaction.to,
-            "amount": transaction.amount,
-            "timestamp": transaction.timestamp,
+            "from": &transaction.from,
+            "to": &transaction.to,
+            "amount": &transaction.amount,
+            "timestamp": &transaction.timestamp,
         };
         self.txs
             .insert_one(bson_transaction, None)
@@ -55,11 +55,11 @@ impl Blockchain
         let tx_ids = block.vtx.iter().map(|tx| bson::to_bson(tx).unwrap()).collect::<Vec<_>>();
 
         let bson_block = doc! {
-            "index": block.index,
+            "index": &block.index,
             "hash": block.get_hash(),
-            "previous_hash": block.previous_hash,
-            "time": block.time,
-            "nonce": block.nonce,
+            "previous_hash": &block.previous_hash,
+            "time": &block.time,
+            "nonce": &block.nonce,
             "tx_ids": tx_ids,
         };
         self.blocks
