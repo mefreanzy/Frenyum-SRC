@@ -16,6 +16,9 @@ pub enum Message
     Block(Block),               // A Block message is a message containing a `Block` object.
 }
 
+// What is mempool?
+// https://www.alchemy.com/overvi
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Node
 {
@@ -30,7 +33,7 @@ impl Node
 {
     pub fn new(adress: String, port: u16) -> Node
     {
-        // Create new node
+        // Create a new node.
         let node = Node {
             adress,
             port,
