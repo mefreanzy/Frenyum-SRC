@@ -9,23 +9,26 @@ pub struct Blockchain
 {
     client: Client,
     db: Database,
-    blocks: Collection,
-    txs: Collection,
+    blocks: Collection,     // Database where blocks are stored.
+    txs: Collection,        // Database where transaction are stored.
 }
 
 impl Blockchain
 {
     pub async fn new(uri: &str, db_name: &str, blockdb_name: &str, txdb_name: &str) -> Result<Blockchain, mongodb::error::Error>
     {
+        // Create new client.
         let client = match Client::with_uri_str(uri).await {
             Ok(client) => client,
             Err(e) => return Err(e),
         };
 
+        // Create new databses.
         let db = client.database(db_name);
         let blocks = db.collection(blockdb_name);
         let txs = db.collection(txdb_name);
 
+        // Return blockchain.
         Ok(Blockchain {
             client,
             db,
@@ -34,7 +37,8 @@ impl Blockchain
         })
     }
 
-    async fn add_db_tx(&self, transaction: &TransactionData)
+    // Adding a transaction to the database.
+    pub async fn add_db_tx(&self, transaction: &TransactionData)
     {
         let bson_transaction = bson::to_document(transaction);
 
@@ -49,7 +53,8 @@ impl Blockchain
             .await.expect("Failed to insert transaction.");
     }
 
-    async fn add_db_block(&self, block: &Block)
+    // Adding a block to the database.
+    pub async fn add_db_block(&self, block: &Block)
     {
         let bson_block = bson::to_document(&block);
         let tx_ids = block.vtx.iter().map(|tx| bson::to_bson(tx).unwrap()).collect::<Vec<_>>();
