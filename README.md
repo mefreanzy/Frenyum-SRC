@@ -1,5 +1,13 @@
-# Frenyum
-Frenyum is an open-source cryptocurrency project.
+<div align="center">
+  <p>
+    <img src="https://i.ibb.co/pzWrbH9/frenyum-logo.png">
+  </p>
+  <h1>Frenyum Protocol</h1>
+  Frenyum is an open-source cryptocurrency project.
+  
+  [Join Discord](https://discord.gg/KjcGJMmwyA) | 
+  [Join Matrix](https://matrix.to/#/#frenyum-protocol:matrix.org) 
+</div>
 
 ### How to Use Frenyum?
 At its current stage of development, Frenyum is not yet ready for user engagement or active usage.
